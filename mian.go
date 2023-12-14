@@ -15,6 +15,12 @@ func HandleRequest(event LambdaFunctionURLRequest) (string, error) {
 		return "", err
 	}
 
+	// LINEのリクエストから検索キーワードを取得
+
+	// 検索キーワードを元に検索を実行
+
+	// 検索結果をLINEあてに返却
+
 	fmt.Println("### End ###")
 	return "### success ###", nil
 }
