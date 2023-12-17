@@ -8,11 +8,28 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/kendra"
-	"github.com/line/line-bot-sdk-go/v7/linebot"
+	"github.com/go-resty/resty/v2"
+	"github.com/line/line-bot-sdk-go/v8/linebot"
 )
 
 const AWS_REGION = "ap-northeast-1"
 const KENDRA_INDEX_ID = "eb17ff24-49b1-4851-8285-9b16b2ffa6a4"
+
+func downloadFile(url string) (*resty.Response, error) {
+
+	c := resty.New()
+
+	// ファイルをダウンロード
+	resp, err := c.R().Get(url)
+	if err != nil {
+		return nil, err
+	}
+
+	if err != nil {
+		return nil, err
+	}
+	return resp, err
+}
 
 func newKendraClient() (*kendra.Kendra, error) {
 
@@ -66,7 +83,7 @@ func kendraSearch(keyword string) (*kendra.QueryOutput, error) {
 	return result, nil
 }
 
-func replyToLINE(l LineRequestBody, m string) error {
+func replyToLINE(l LineRequestBody, m, url string) error {
 
 	bot, err := linebot.New(
 		os.Getenv("CHANNEL_SECRET"),
@@ -100,19 +117,22 @@ func HandleRequest(event LambdaFunctionURLRequest) (string, error) {
 	}
 	slog.Info(result.String())
 	var message string
+	var url string
 	for _, r := range result.ResultItems {
-		message += "Title\n"
-		slog.Info(*r.DocumentTitle.Text)
+		url = *r.DocumentURI
 		message += *r.DocumentTitle.Text
-		message += "\nText\n"
-		slog.Info(*r.DocumentExcerpt.Text)
 		message += *r.DocumentExcerpt.Text
 	}
 
+	// 画像取得 今はKendraのPDF
+	_, err = downloadFile(url)
+	if err != nil {
+		slog.Error("Download File Error ", err)
+		return "", err
+	}
+
 	// 検索結果をLINEあてに返却
-	message += "検索キーワード\n"
-	message += searchWord
-	if err := replyToLINE(l, message); err != nil {
+	if err := replyToLINE(l, message, url); err != nil {
 		slog.Error("Reply to LINE Error ", err)
 		return "", err
 	}
