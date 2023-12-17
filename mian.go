@@ -33,12 +33,14 @@ func HandleRequest(event LambdaFunctionURLRequest) (string, error) {
 		return "", err
 	}
 
+	searchWord := l.Events[0].Message.Text
+
 	// LINEのリクエストから検索キーワードを取得
 
 	// 検索キーワードを元に検索を実行
 
 	// 検索結果をLINEあてに返却
-	if err := replyToLINE(l, "TEST"); err != nil {
+	if err := replyToLINE(l, searchWord); err != nil {
 		slog.Error("Reply to LINE Error", err)
 		return "", err
 	}
