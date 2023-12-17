@@ -32,10 +32,7 @@ func HandleRequest(event LambdaFunctionURLRequest) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	searchWord := l.Events[0].Message.Text
-
-	// LINEのリクエストから検索キーワードを取得
 
 	// 検索キーワードを元に検索を実行
 
