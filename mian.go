@@ -35,11 +35,26 @@ func kendraSearch(keyword string) (*kendra.QueryOutput, error) {
 		return nil, err
 	}
 
+	// 検索オプション
+	attributeFilter := &kendra.AttributeFilter{
+		AndAllFilters: []*kendra.AttributeFilter{
+			{
+				EqualsTo: &kendra.DocumentAttribute{
+					Key: aws.String("_language_code"),
+					Value: &kendra.DocumentAttributeValue{
+						StringValue: aws.String("ja"),
+					},
+				},
+			},
+		},
+	}
+
 	input := &kendra.QueryInput{
-		QueryText:  aws.String(keyword),
-		IndexId:    aws.String(KENDRA_INDEX_ID),
-		PageNumber: aws.Int64(1),
-		PageSize:   aws.Int64(1),
+		QueryText:       aws.String(keyword),
+		IndexId:         aws.String(KENDRA_INDEX_ID),
+		PageNumber:      aws.Int64(1),
+		PageSize:        aws.Int64(1),
+		AttributeFilter: attributeFilter,
 	}
 	slog.Info(input.String())
 
@@ -84,13 +99,20 @@ func HandleRequest(event LambdaFunctionURLRequest) (string, error) {
 		return "", err
 	}
 	slog.Info(result.String())
+	var message string
 	for _, r := range result.ResultItems {
+		message += "Title\n"
 		slog.Info(*r.DocumentTitle.Text)
+		message += *r.DocumentTitle.Text
+		message += "\nText\n"
 		slog.Info(*r.DocumentExcerpt.Text)
+		message += *r.DocumentExcerpt.Text
 	}
 
 	// 検索結果をLINEあてに返却
-	if err := replyToLINE(l, searchWord); err != nil {
+	message += "検索キーワード\n"
+	message += searchWord
+	if err := replyToLINE(l, message); err != nil {
 		slog.Error("Reply to LINE Error ", err)
 		return "", err
 	}
