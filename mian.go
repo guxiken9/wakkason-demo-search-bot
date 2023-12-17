@@ -36,9 +36,12 @@ func kendraSearch(keyword string) (*kendra.QueryOutput, error) {
 	}
 
 	input := &kendra.QueryInput{
-		QueryText: aws.String(keyword),
-		IndexId:   aws.String(KENDRA_INDEX_ID),
+		QueryText:  aws.String(keyword),
+		IndexId:    aws.String(KENDRA_INDEX_ID),
+		PageNumber: aws.Int64(1),
+		PageSize:   aws.Int64(1),
 	}
+	slog.Info(input.String())
 
 	result, err := c.Query(input)
 	if err != nil {
@@ -81,6 +84,11 @@ func HandleRequest(event LambdaFunctionURLRequest) (string, error) {
 		return "", err
 	}
 	slog.Info(result.String())
+	for _, r := range result.ResultItems {
+		slog.Info(*r.DocumentTitle.Text)
+		slog.Info(*r.DocumentExcerpt.Text)
+	}
+
 	// 検索結果をLINEあてに返却
 	if err := replyToLINE(l, searchWord); err != nil {
 		slog.Error("Reply to LINE Error ", err)
