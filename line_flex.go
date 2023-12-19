@@ -32,6 +32,7 @@ type Content struct {
 	Type   string `json:"type"`
 	Text   string `json:"text"`
 	Weight string `json:"weight"`
+	Wrap   bool   `json:"wrap"`
 	Size   string `json:"size"`
 }
 
@@ -61,8 +62,9 @@ func NewFlex(url, text string) (*linebot.FlexMessage, error) {
 				{
 					Type:   "text",
 					Text:   text,
-					Weight: "bold",
-					Size:   "sm",
+					Weight: "regular",
+					Wrap:   true,
+					Size:   "xl",
 				},
 			},
 		},
