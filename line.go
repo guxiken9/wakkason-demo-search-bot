@@ -18,9 +18,11 @@ func replyToLINE(l LineRequestBody, m, url string) error {
 	}
 
 	slog.Info(l.Events[0].Source.UserID)
-	textMessage := linebot.NewTextMessage(m)
-	imageMessage := linebot.NewImageMessage(url, url)
-	_, err = bot.PushMessage(l.Events[0].Source.UserID, textMessage, imageMessage).Do()
+	f, err := NewFlex(url, m)
+	if err != nil {
+		return err
+	}
+	_, err = bot.PushMessage(l.Events[0].Source.UserID, f).Do()
 	if err != nil {
 		return err
 	}
