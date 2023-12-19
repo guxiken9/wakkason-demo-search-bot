@@ -17,14 +17,13 @@ func replyToLINE(l LineRequestBody, m, url string) error {
 		return err
 	}
 
+	slog.Info(l.Events[0].Source.UserID)
 	textMessage := linebot.NewTextMessage(m)
 	imageMessage := linebot.NewImageMessage(url, url)
-	res, err := bot.PushMessage(l.Events[0].Source.UserID, textMessage, imageMessage).Do()
+	_, err = bot.PushMessage(l.Events[0].Source.UserID, textMessage, imageMessage).Do()
 	if err != nil {
 		return err
 	}
-
-	slog.Info("Push Message Response", res)
 
 	return nil
 }
