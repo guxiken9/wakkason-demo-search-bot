@@ -5,7 +5,6 @@ go 1.21.4
 require github.com/aws/aws-lambda-go v1.42.0
 
 require (
-	github.com/go-resty/resty/v2 v2.10.0
 	github.com/line/line-bot-sdk-go/v8 v8.0.2
 	gorm.io/gorm v1.25.5
 )
@@ -16,7 +15,4 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 )
 
-require (
-	golang.org/x/net v0.19.0 // indirect
-	gorm.io/driver/mysql v1.5.2
-)
+require gorm.io/driver/mysql v1.5.2
