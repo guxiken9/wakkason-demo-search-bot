@@ -42,7 +42,7 @@ func Search(key string) ([]Memory, error) {
 		return nil, err
 	}
 
-	db.Limit(1).Where("Memory LIKE ?", "%"+key+"%").Find(&m)
+	db.Where("Memory LIKE ?", "%"+key+"%").Find(&m)
 
 	// TiDB上からLIKE検索
 	return m, nil

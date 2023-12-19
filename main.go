@@ -24,7 +24,7 @@ func HandleRequest(event LambdaFunctionURLRequest) (string, error) {
 	}
 
 	for _, r := range result {
-		if err := replyToLINE(l, r.Memory, r.PhotoURL); err != nil {
+		if err := replyToLINE(l, r.Title, r.PhotoURL); err != nil {
 			slog.Error("Reply to LINE Error ", err)
 			return "", err
 		}

@@ -17,14 +17,9 @@ func replyToLINE(l LineRequestBody, m, url string) error {
 		return err
 	}
 
-	token := l.Events[0].ReplyToken
-	if _, err := bot.ReplyMessage(token, linebot.NewTextMessage(m)).Do(); err != nil {
-		return err
-	}
-
+	textMessage := linebot.NewTextMessage(m)
 	imageMessage := linebot.NewImageMessage(url, url)
-
-	res, err := bot.PushMessage(l.Events[0].Source.UserID, imageMessage).Do()
+	res, err := bot.PushMessage(l.Events[0].Source.UserID, textMessage, imageMessage).Do()
 	if err != nil {
 		return err
 	}
