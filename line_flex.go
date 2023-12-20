@@ -79,7 +79,7 @@ func NewFlex(url, text string) (*linebot.FlexMessage, error) {
 		// 正しくUnmarshalできないinvalidなJSONであればerrが返る
 		return nil, err
 	}
-	message := linebot.NewFlexMessage("alt text", container)
+	message := linebot.NewFlexMessage(text, container)
 
 	return message, nil
 
